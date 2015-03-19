@@ -33,7 +33,11 @@ require_once('includes/Redis.class.php');
 
 $app = new \Slim\Slim();
 $Redis = new Redis();
-$Routes = new Routes($app);
+$Routes = new Routes($app, $Redis);
+
+//Just don't add anything as the second param
+//if you don't want to track with Redis
+//$Routes = new Routes($app);
 
 //set logging for debugging
 //comment out if using in production

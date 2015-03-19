@@ -29,6 +29,11 @@
 
 require_once('vendor/autoload.php');
 
+/**
+ * Class FlushRedis
+ * Gets rid of everything in Redis.
+ * We recommend running this about every 5-10 minutes.
+ */
 class FlushRedis
 {
 
