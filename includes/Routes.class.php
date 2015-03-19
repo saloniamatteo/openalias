@@ -83,7 +83,6 @@ class Routes extends \Slim\Slim
         //checks to see if $domain is, in fact, a domain.
         if (preg_match('^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$^', $domain)) {
 
-
             //if redis is enabled
             if ($this->redis) {
                 $redis_response = $this->redis->get($domain);
@@ -144,7 +143,23 @@ class Routes extends \Slim\Slim
                     'response' => 'No OA1 records found'
                 );
             } else {
-                $this->redis->write($domain, json_encode($response));
+                $response['records_returned'] = count($response['records']);
+
+                $response['error'] = false;
+
+                //check for dnssec
+                exec('host -t RRSIG ' . $domain, $output);
+
+                if (!strstr($output[0], 'not found')) {
+                    $response['dnssec_verified'] = true;
+                } else {
+                    $response['dnssec_verified'] = false;
+                }
+
+                //write to redis if it's enabled
+                if ($this->redis != false) {
+                    $this->redis->write($domain, json_encode($response));
+                }
             }
 
         } else {
