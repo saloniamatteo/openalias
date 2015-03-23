@@ -32,8 +32,8 @@ require_once('includes/Routes.class.php');
 require_once('includes/Redis.class.php');
 
 $app = new \Slim\Slim();
-$Redis = new Redis();
-$Routes = new Routes($app, $Redis);
+//$Redis = new Redis();
+$Routes = new Routes($app);
 
 //Just don't add anything as the second param
 //if you don't want to track with Redis

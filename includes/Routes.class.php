@@ -43,6 +43,8 @@ class Routes extends \Slim\Slim
      */
     private $redis = false;
 
+    private $m;
+
     /**
      * @param array $app
      * Setup the slim app, please.
@@ -55,6 +57,14 @@ class Routes extends \Slim\Slim
         if ($redis !== false) {
             $this->redis = $redis;
         }
+
+        $this->m = $m = new Mustache_Engine(
+            array(
+                'loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/../views', array(
+                    'extension' => '.mustache'
+                )),
+            )
+        );
     }
 
     /**
@@ -62,9 +72,7 @@ class Routes extends \Slim\Slim
      */
     public function index()
     {
-        $this->app->response->headers->set('Content-Type', 'text/html');
-        $form = file_get_contents(__DIR__ . '/../views/form.html');
-        echo $form;
+        echo $this->m->render('form');
     }
 
     /**
@@ -75,8 +83,6 @@ class Routes extends \Slim\Slim
      */
     public function domainCheck($domain)
     {
-        $this->app->response->headers->set('Content-Type', 'application/json');
-
         //create a blank response to fill in later
         $response = array();
 
@@ -110,6 +116,7 @@ class Routes extends \Slim\Slim
 
             //look for oa1 records
             foreach ($records as $record) {
+
                 if (substr($record['txt'], 0, 3) == 'oa1') {
                     $this_record = array(
                         'oa1' => substr($record['txt'], 4, 3),
@@ -119,15 +126,13 @@ class Routes extends \Slim\Slim
                     $record['txt'] = array_map('trim', explode(';', substr($record['txt'], 8)));
 
                     foreach ($record['txt'] as $item) {
+
                         $this_item = explode('=', $item);
 
                         //if the item isn't empty
                         if (count($this_item) > 1) {
 
-                            //if it matches an accepted record
-                            if (in_array($this_item[0], $accepted_records)) {
-                                $this_record[$this_item[0]] = $this_item[1];
-                            }
+                            $this_record[$this_item[0]] = $this_item[1];
                         }
                     }
 
@@ -171,8 +176,18 @@ class Routes extends \Slim\Slim
             );
         }
 
-        //encode and return the response
-        echo json_encode($response);
+        $req = $this->app->request();
+
+        if ($req->get('view') == 'full') {
+            $this->app->response->headers->set('Content-Type', 'text/html');
+
+            echo $this->m->render('pretty_response', array('results' => json_encode($response)));
+        } else {
+            $this->app->response->headers->set('Content-Type', 'application/json');
+
+            //encode and return the response
+            echo json_encode($response);
+        }
 
     }
 }
