@@ -1,6 +1,7 @@
 {
     "require": {
         "slim/slim": "~2.6",
-        "colinmollenhour/credis": "~1.5"
+        "colinmollenhour/credis": "~1.5",
+	"mustache/mustache": "*"
     }
 }
