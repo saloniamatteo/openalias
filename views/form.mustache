@@ -20,6 +20,8 @@
 	<link rel="stylesheet" href="../css/style.css">
 
 	<script type="text/javascript">
+	document.onreadystatechange = () => remember_prefs;
+	
 	function submit_form(type) {
 		if (type == "s")
 			var domain = document.getElementById("domain_s");
