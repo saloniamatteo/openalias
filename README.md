@@ -92,8 +92,11 @@ After entering a domain name and hitting "Submit", you should see something like
 
 Notice the page will also tell you if the domain's DNSSEC is verified or not.
 
-Normally, the website will show human-readable results (of course), however, you can also get JSON results directly, simply by removing the `view=full` GET parameter from the URL.
-For example:
+Normally, the website will show human-readable results (of course), however, you can also get JSON results directly, simply by removing the `view=full` GET parameter from the URL, that way you can easily parse the JSON response:
+
+![JSON response](json.png)
+
+URLs:
 
 - `https://oa.salonia.it/salonia.it?view=full` -> Human readable results
 - `https://oa.salonia.it/salonia.it`           -> Results in JSON
