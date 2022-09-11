@@ -9,5 +9,6 @@ return array(
     'CredisException' => $vendorDir . '/colinmollenhour/credis/Client.php',
     'Credis_Client' => $vendorDir . '/colinmollenhour/credis/Client.php',
     'Credis_Cluster' => $vendorDir . '/colinmollenhour/credis/Cluster.php',
+    'Credis_Module' => $vendorDir . '/colinmollenhour/credis/Module.php',
     'Credis_Sentinel' => $vendorDir . '/colinmollenhour/credis/Sentinel.php',
 );
