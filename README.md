@@ -100,3 +100,15 @@ URLs:
 
 - `https://oa.salonia.it/salonia.it?view=full` -> Human readable results
 - `https://oa.salonia.it/salonia.it`           -> Results in JSON
+
+## Original work & License notices
+
+This project is based on the original work at [openalias/openalias-api](https://github.com/openalias/openalias-api) - the last update was in 2015, and the UI is definitely lacking, therefore I worked on it to improve it and modernize the UI/UX a bit.
+
+The UI was realised thanks to [BeerCSS](https://beercss.com), huge thanks to the BeerCSS team for making this awesome & easy-to-use modern CSS framework.
+
+- BeerCSS: [MIT License](https://github.com/beercss/beercss/blob/main/LICENSE)
+- Composer: [MIT License](https://github.com/composer/composer/blob/main/LICENSE)
+- Credis: [MIT License](https://github.com/saloniamatteo/openalias/blob/master/vendor/colinmollenhour/credis/LICENSE)
+- Slim: [MIT Public License](https://github.com/saloniamatteo/openalias/blob/master/vendor/slim/slim/LICENSE)
+- This project: [GNU AGPLv3](https://github.com/saloniamatteo/openalias/blob/master/LICENSE)
