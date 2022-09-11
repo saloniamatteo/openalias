@@ -26,7 +26,15 @@ $Routes = new Routes($app);
 //$Routes = new Routes($app, $Redis);
 ```
 
-You can also enable/disable logging (disabled by default). After all of this, you'll be good to go.
+You can also enable/disable logging (disabled by default):
+
+```php
+/* Set logging options for debugging, comment if using in production */
+$app->log->setEnabled(true);
+$app->log->setLevel(\Slim\Log::DEBUG);
+```
+
+After all of this, you'll be good to go.
 
 ## Setting up with Nginx
 
@@ -46,25 +54,25 @@ server {
 	index index.php;
 
 	location / {
-			# This is cool because no php is touched for static content.
-			try_files $uri $uri/ /index.php;
+		# This is cool because no php is touched for static content.
+		try_files $uri $uri/ /index.php;
 	}
 
 	location ~ [^/]\.php(/|$) {
-			fastcgi_split_path_info ^(.+?\.php)(/.*)$;
-			if (!-f $document_root$fastcgi_script_name) {
-							return 404;
-			}
+		fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+		if (!-f $document_root$fastcgi_script_name) {
+			return 404;
+		}
 
-			# Mitigate https://httpoxy.org/ vulnerabilities
-			# NOTE: here we use '127.0.0.1:9000' for PHP FastCGI,
-			# replace it if you use a different port number, or if you use UNIX sockets
-			fastcgi_param HTTP_PROXY "";
-			fastcgi_pass 127.0.0.1:9000;
+		# Mitigate https://httpoxy.org/ vulnerabilities
+		# NOTE: here we use '127.0.0.1:9000' for PHP FastCGI,
+		# replace it if you use a different port number, or if you use UNIX sockets
+		fastcgi_param HTTP_PROXY "";
+		fastcgi_pass 127.0.0.1:9000;
 
-			fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
-			fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
-			include fastcgi.conf;
+		fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+		fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
+		include fastcgi.conf;
 	}
 }
 ```
@@ -87,5 +95,5 @@ Notice the page will also tell you if the domain's DNSSEC is verified or not.
 Normally, the website will show human-readable results (of course), however, you can also get JSON results directly, simply by removing the `view=full` GET parameter from the URL.
 For example:
 
-`https://oa.salonia.it/salonia.it?view=full` -> Human readable results
-`https://oa.salonia.it/salonia.it`           -> Results in JSON
+- `https://oa.salonia.it/salonia.it?view=full` -> Human readable results
+- `https://oa.salonia.it/salonia.it`           -> Results in JSON
