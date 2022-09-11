@@ -1,37 +1,91 @@
-# openalias-api
-A simple API for OpenAlias resolution
+# OpenAlias API WebForm
+Improved OpenAlias API WebForm, based on existing work from [openalias/openalias-api](https://github.com/openalias/openalias-api).
 
-# Requirements
+## Requirements
+- php
+- redis (optional but recommended, used to cache requests)
 
-Not a whole lot, really.
+Also, you need to be running on a UNIX environment that allows use of the `host` command (to check RRSIG keys).
 
-You need to be running on a Unix environment that allows use of the `host` command (for checking RRSIG keys) and if you want to allow caching, you'll need to have access to a Redis database.
+## Installation
+Clone this repository:
 
-# Installation
+`git clone https://github.com/saloniamatteo/openalias`
 
-Installation is simple and quick.
+After that, modify `config.ini` to set redis location and port; by default it's set to `localhost` and port `6379`.
 
-Just download the zip and place it wherever you want it to run.
+If you want to cache with Redis, you won't have to do anything, as it's enabled by default.
+However, if you DO NOT want to use Redis, then modify `index.php`, and modify the file as follows:
 
-After that, you'll just need to modify `config.ini` for your Redis host and port. By default it's set to `localhost` and port `6379`.
+```php
+/* Uncomment this line if you DON'T want to use Redis */
+$Routes = new Routes($app);
 
-In `index.php` you can make a couple changes.
+/* Uncomment these lines if you want to use Redis */
+//$Redis = new Redis();
+//$Routes = new Routes($app, $Redis);
+```
 
-If you want to cache with Redis, make sure you have `line 35` uncommented. Then, in the instantiation of `Routes`, add your object as the second parameter. An example of all this is already in the code, so it's easy to see how it works.
+You can also enable/disable logging (disabled by default). After all of this, you'll be good to go.
 
-Once you do that, you're all setup and ready to go. The rest manages itself. All this will take you about 49 seconds.
+## Setting up with Nginx
 
+I recommend you use nginx, because it's fast and simple to use, however you can use Apache or any other Web Server.
 
-# Usage
+Create a file under `/etc/nginx/sites-enabled`, for example `/etc/nginx/sites-enabled/openalias`:
 
-If it was easy to install, it's even easier to use. Once you've set it up on your web server, just hit it in your browser.
+```nginx
+server {
+	# NOTE: replace 'oa.example.com' with your domain
+	# For example, I use 'oa.salonia.it'
+	listen 80;
+	server_name oa.example.com;
 
-So, let's say you're on `localhost`. Just go to `http://localhost/OpenAlias-api/` and you'll see a nice little web form.
+	# NOTE: replace '/var/www/oa' with the location of this directory
+	root /var/www/oa;
+	index index.php;
 
-![web form](http://i.imgur.com/VjcGz8Vm.png?1)
+	location / {
+			# This is cool because no php is touched for static content.
+			try_files $uri $uri/ /index.php;
+	}
 
-In that form you can place a domain to check it's OpenAlias records. After you submit, a JSON string will be returned with all the data. If no OpenAlias data has been found, then you'll get a 400 error code along with an error description in the JSON string.
+	location ~ [^/]\.php(/|$) {
+			fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+			if (!-f $document_root$fastcgi_script_name) {
+							return 404;
+			}
 
-If you want to bypass the web form completely (and we recommend you do, as it's primarily just for testing) you can create your url thusly: `http://localhost/OpenAlias-api/domain.com`.
+			# Mitigate https://httpoxy.org/ vulnerabilities
+			# NOTE: here we use '127.0.0.1:9000' for PHP FastCGI,
+			# replace it if you use a different port number, or if you use UNIX sockets
+			fastcgi_param HTTP_PROXY "";
+			fastcgi_pass 127.0.0.1:9000;
 
-See? Simple. Just add your domain to the end of the URL and it'll automatically pull all the data for you. If you take a look at the URL the form sends you to, it's exactly the same format.
+			fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+			fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
+			include fastcgi.conf;
+	}
+}
+```
+
+## Usage
+
+After you configured nginx, or a Web Server of your choice, you're ready to run OpenAlias.
+
+If you configured it like the example above, navigate to `oa.example.com` (obviously, replace it with your domain name).
+After, you'll see an interface like this one:
+
+![Landing page](main.png)
+
+After entering a domain name and hitting "Submit", you should see something like this:
+
+![Results page](res.png)
+
+Notice the page will also tell you if the domain's DNSSEC is verified or not.
+
+Normally, the website will show human-readable results (of course), however, you can also get JSON results directly, simply by removing the `view=full` GET parameter from the URL.
+For example:
+
+`https://oa.salonia.it/salonia.it?view=full` -> Human readable results
+`https://oa.salonia.it/salonia.it`           -> Results in JSON
