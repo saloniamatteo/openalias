@@ -1,6 +1,9 @@
 # OpenAlias API WebForm
 Improved OpenAlias API WebForm, based on existing work from [openalias/openalias-api](https://github.com/openalias/openalias-api).
 
+## Donate
+Support this project: [salonia.it/donate](https://salonia.it/donate)
+
 ## Requirements
 - php
 - redis (optional but recommended, used to cache requests)
