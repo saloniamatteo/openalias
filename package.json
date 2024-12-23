@@ -1,0 +1,19 @@
+{
+    "name": "saloniamatteo/openalias",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.20",
+        "laravel-vite-plugin": "^1.0",
+        "postcss": "^8.4.47",
+        "vite": "^5.0"
+    },
+    "dependencies": {
+        "@erbelion/vite-plugin-laravel-purgecss": "^0.3.2",
+        "lucide": "^0.469.0"
+    }
+}

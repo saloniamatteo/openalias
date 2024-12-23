@@ -1,0 +1,3 @@
+Contact: mailto:matteo@salonia.it
+Encryption: https://salonia.it/matteo.asc
+Preferred-Languages: it, en

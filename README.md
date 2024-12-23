@@ -1,117 +1,364 @@
-# OpenAlias API WebForm
-Improved OpenAlias API WebForm, based on existing work from [openalias/openalias-api](https://github.com/openalias/openalias-api).
+# [OpenAlias WebUI](https://oa.salonia.it)
+OpenAlias web portal to easily retrieve OpenAlias records of any domain.
+
+This website is built in **PHP** with the following:
+- **Backend**: [Laravel](https://laravel.com)
+- **Bundler**: [Vite](https://vite.dev) + [PurgeCSS](https://purgecss.com)
+
+The following are used for the front-end:
+- **Framework**: [CirrusUI](https://cirrus-ui.com)
+- **Icons**: [Lucide](https://lucide.dev)
 
 ## Donate
 Support this project: [salonia.it/donate](https://salonia.it/donate)
 
-## Requirements
-- php
-- redis (optional but recommended, used to cache requests)
+## Screenshots
+Landing page:
+![oa](Pictures/oa.png)
 
-Also, you need to be running on a UNIX environment that allows use of the `host` command (to check RRSIG keys).
+Page with results:
+![oa-records](Pictures/oa-records.png)
 
-## Installation
-Clone this repository:
+Page with no results:
+![oa-norecords](Pictures/oa-norecords.png)
 
-`git clone https://github.com/saloniamatteo/openalias`
+## Features
+### AbuseIPDB
+This Middleware, written by me, checks if the incoming IP address comes from
+a "bad" server (crawlers, scanners, etc.), thanks to
+[AbuseIPDB](https://www.abuseipdb.com/faq.html)'s `/check` API endpoint.
 
-After that, modify `config.ini` to set redis location and port; by default it's set to `localhost` and port `6379`.
+When a request is received, the `BlockRequest` Middleware will check the cache,
+using the incoming IP as key. If a record is found, check if it is a good IP:
+if it is, proceed with the request. If it isn't, throw a `403`, which will be
+rendered with a pretty page, regardless.
 
-If you want to cache with Redis, you won't have to do anything, as it's enabled by default.
-However, if you DO NOT want to use Redis, then modify `index.php`, and modify the file as follows:
+If no records are found in the cache, `BlockRequest` queries AbuseIPDB,
+honoring the user-provided options (see below). If the IP address is
+whitelisted, check if the user wants to ignore this whitelist;
+we then check the IP score and, if it is above a certain threshold,
+the request will be blocked, like the case above, throwing a `403`.
 
-```php
-/* Uncomment this line if you DON'T want to use Redis */
-$Routes = new Routes($app);
+To use this, create an account, then head over to [AbuseIPDB/api](https://www.abuseipdb.com/account/api)
+and create an APIv2 key. Save this key into the `.env` file:
 
-/* Uncomment these lines if you want to use Redis */
-//$Redis = new Redis();
-//$Routes = new Routes($app, $Redis);
+```env
+# If you want to block incoming requests from bad servers
+# using AbuseIPDB, enter your API key here.
+ABUSEIPDB_KEY= # Your API key goes here!
 ```
 
-You can also enable/disable logging (disabled by default):
+You're all set! Make sure the cache store is also properly configured.
+The cache store provided with this site is `file`, so you should be good.
+
+Additionally, you can tune the following parameters:
+- `ABUSEIPDB_THRESHOLD`: The minimum percentage score required
+                         for an IP to be considered malicious. Default: `35`.
+- `ABUSEIPDB_IGNORE_WHITELIST`: Ignore AbuseIPDB's whitelist preference
+                                for every IP. Default: `0`.
+- `ABUSEIPDB_CACHE_TTL`: Store the results in cache for x minutes. Default: `15`
+- `ABUSEIPDB_IP_OK`: Store this string for a known good IP. Default: `OK`
+- `ABUSEIPDB_IP_BAD`: Store this string for a known bad IP. Default: `BAD`
+
+### Rate limiter
+Apart from the AbuseIPDB integration, this website uses Laravel's
+[rate limiter](https://laravel.com/docs/11.x/rate-limiting).
+It uses the same `CACHE_STORE` driver as the AbuseIPDB integration,
+which defaults to `file`.
+
+The rate limiter is defined in `app/Providers/AppServiceProvider.php` as follows:
 
 ```php
-/* Set logging options for debugging, comment if using in production */
-$app->log->setEnabled(true);
-$app->log->setLevel(\Slim\Log::DEBUG);
-```
-
-After all of this, you'll be good to go.
-
-## Setting up with Nginx
-
-I recommend you use nginx, because it's fast and simple to use, however you can use Apache or any other Web Server.
-
-Create a file under `/etc/nginx/sites-enabled`, for example `/etc/nginx/sites-enabled/openalias`:
-
-```nginx
-server {
-	# NOTE: replace 'oa.example.com' with your domain
-	# For example, I use 'oa.salonia.it'
-	listen 80;
-	server_name oa.example.com;
-
-	# NOTE: replace '/var/www/oa' with the location of this directory
-	root /var/www/oa;
-	index index.php;
-
-	location / {
-		# This is cool because no php is touched for static content.
-		try_files $uri $uri/ /index.php;
-	}
-
-	location ~ [^/]\.php(/|$) {
-		fastcgi_split_path_info ^(.+?\.php)(/.*)$;
-		if (!-f $document_root$fastcgi_script_name) {
-			return 404;
-		}
-
-		# Mitigate https://httpoxy.org/ vulnerabilities
-		# NOTE: here we use '127.0.0.1:9000' for PHP FastCGI,
-		# replace it if you use a different port number, or if you use UNIX sockets
-		fastcgi_param HTTP_PROXY "";
-		fastcgi_pass 127.0.0.1:9000;
-
-		fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
-		fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
-		include fastcgi.conf;
-	}
+/* Bootstrap any application services. */
+public function boot()
+{
+	// Limit to 5 requests per minute.
+	RateLimiter::for('global', function (Request $request) {
+		return Limit::perMinute(5)->by($request->ip());
+	});
 }
 ```
 
-## Usage
+It is configured to allow a maximum of **5 page requests per minute**,
+before throwing an HTTP 429 (Too many requests).
 
-After you configured nginx, or a Web Server of your choice, you're ready to run OpenAlias.
+### Asset bundling
+Assets are bundled and handled by Vite:
+- CSS & JS files are minified (PostCSS and PurgeCSS) and versioned
+- Images are versioned
 
-If you configured it like the example above, navigate to `oa.example.com` (obviously, replace it with your domain name).
-After, you'll see an interface like this one:
+This helps with removing unused code, lowering asset size, and lowering page load times.
 
-![Landing page](main.png)
+Run `npm run build` to re-generate the asset bundle.
 
-After entering a domain name and hitting "Submit", you should see something like this:
+### Components
+Most HTML components (Card, Hero, Tile, etc.) are split up in several files, under `resources/views/components/`.
+This makes it way easier and faster to write new pages, thanks to Blade Templates.
 
-![Results page](res.png)
+### Caching
+Config, events, views, and routes are cached, making site load-times faster.
 
-Notice the page will also tell you if the domain's DNSSEC is verified or not.
+Run `composer cache` to cache them.
 
-Normally, the website will show human-readable results (of course), however, you can also get JSON results directly, simply by removing the `view=full` GET parameter from the URL, that way you can easily parse the JSON response:
+### Minification
+Every page is minified. Laravel does not do this by default, and there does not
+seem to be a "standard" way to do it, other than downloading some shady package.
 
-![JSON response](json.png)
+I've implemented my own simple HTML minifier, making use of PHP's output buffering.
 
-URLs:
+Additionally, CSS & JS files are minified by PurgeCSS and Vite, respectively.
 
-- `https://oa.salonia.it/salonia.it?view=full` -> Human readable results
-- `https://oa.salonia.it/salonia.it`           -> Results in JSON
+## Dependencies
+To deploy this website, you need the following:
+- `php`
+- `composer`
+- `nodejs` with `npm`
 
-## Original work & License notices
+## Setup
+- Clone the repo: `git clone https://github.com/saloniamatteo/openalias`
+- Change directory: `cd openalias`
+- Install PHP dependencies: `composer install`
+- Install node dependencies: `npm i`
+- Generate `APP_KEY`: `php artisan key:generate`
 
-This project is based on the original work at [openalias/openalias-api](https://github.com/openalias/openalias-api) - the last update was in 2015, and the UI is definitely lacking, therefore I worked on it to improve it and modernize the UI/UX a bit.
+If you want to deploy the website locally, make sure you modify `.env`,
+and uncomment the following:
 
-The UI was realised thanks to [BeerCSS](https://beercss.com), huge thanks to the BeerCSS team for making this awesome & easy-to-use modern CSS framework.
+```env
+# Uncomment these values if running in production
+APP_ENV=local
+APP_DEBUG=true
+APP_URL="http://localhost"
+```
 
-- BeerCSS: [MIT License](https://github.com/beercss/beercss/blob/main/LICENSE)
-- Composer: [MIT License](https://github.com/composer/composer/blob/main/LICENSE)
-- Credis: [MIT License](https://github.com/saloniamatteo/openalias/blob/master/vendor/colinmollenhour/credis/LICENSE)
-- Slim: [MIT Public License](https://github.com/saloniamatteo/openalias/blob/master/vendor/slim/slim/LICENSE)
-- This project: [GNU AGPLv3](https://github.com/saloniamatteo/openalias/blob/master/LICENSE)
+The website can now be deployed using the built-in webserver, `php artisan serve`:
+it will be reachable at `localhost` on port `8000`.
+
+If you want to use the built-in webserver, make sure you set `APP_URL` to your website's URL.
+
+If you want to serve this website to the Internet, please make sure you don't use
+`php spark serve`, and rather have a real server.
+I use [nginx](https://nginx.org) with [FastCGI](https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html).
+
+Make sure you also disable access to `/build/assets/manifest.json`!
+
+### Assets
+Make sure you bundle the assets used in the website (CSS, fonts, images):
+
+```sh
+npm run build
+```
+
+### Cache
+When running in production, it is recommended to cache PHP assets with the following command:
+
+```sh
+composer cache
+```
+
+This will cache PHP config, events, routes, views.
+
+### Sample nginx config
+Note: this config makes the following assumptions:
+- Your site is hosted at `oa.example.com`
+- You use LetsEncrypt (`certbot`) and have deployed an SSL certificate
+- Your `nginx` build supports HTTP2 and HTTP3 (QUIC)
+- You have IPv6 support enabled
+- You use port 80 for HTTP and port 443 for HTTPS
+- You use php-fpm (FastCGI) and call it via `/var/run/php-fpm.sock`
+- You want to disable client uploads
+- You want to redirect every HTTP request to the HTTPS port
+- You want to allow `robots.txt`
+- You want to disable `.well-known`
+
+Make sure you movify everything that says "Change this"!
+
+```nginx
+server {
+	# HTTP/1.1 & HTTP/2
+	listen 443 ssl;
+	listen [::]:443 ssl;
+
+	# HTTP/3 (QUIC)
+	listen 443 quic;
+	listen [::]:443 quic;
+
+	# Change this!
+	server_name oa.example.com;
+
+	# If the host isn't oa.example.com, redirect the client
+	# Change this!
+	if ($host != oa.example.com) {
+		return 301 https://oa.example.com$request_uri;
+	}
+
+	# HTTP2/3
+	http2 on;
+	http3 on;
+	quic_gso on;
+	quic_retry on;
+	ssl_early_data on;
+
+	# SSL
+	ssl_stapling on;
+	ssl_stapling_verify on;
+	include /etc/letsencrypt/options-ssl-nginx.conf;
+	ssl_certificate /path/to/fullchain.pem; # Change this!
+	ssl_certificate_key /path/to/privkey.pem; # Change this!
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+	# Site root. Change this!
+	root /var/www/oa.example.com/public;
+
+	# Prevent nginx HTTP Server Detection
+	server_tokens off;
+
+	# Only allow GET requests
+	if ($request_method !~* ^GET$) {
+		return 405;
+	}
+
+	# Disable uploads
+	client_max_body_size 0;
+	client_body_timeout 0s;
+	fastcgi_buffers 64 4K;
+
+	# The settings allows you to optimize the HTTP2 bandwidth.
+	# See https://blog.cloudflare.com/delivering-http-2-upload-speed-improvements for tuning hints
+	client_body_buffer_size 512k;
+
+	# Specify how to handle directories -- specifying `/index.php$request_uri`
+	# here as the fallback means that Nginx always exhibits the desired behaviour
+	# when a client requests a path that corresponds to a directory that exists
+	# on the server. In particular, if that directory contains an index.php file,
+	# that file is correctly served; if it doesn't, then the request is passed to
+	# the front-end controller. This consistent behaviour means that we don't need
+	# to specify custom rules for certain paths (e.g. images and other assets,
+	# `/updater`, `/ocm-provider`, `/ocs-provider`), and thus
+	# `try_files $uri $uri/ /index.php$request_uri`
+	# always provides the desired behaviour.
+	index index.php index.html /index.php$request_uri;
+
+	# Allow robots.txt
+	location = /robots.txt {
+		allow all;
+		log_not_found off;
+	}
+
+	# Disable .well-known
+	location ~ /\.(?!well-known).* {
+		log_not_found off;
+		deny all;
+	}
+
+	# Hide certain paths from clients
+	location ~ ^/(?:3rdparty|config|data|lib|manifest.json|templates|tests)(?:$|/) { return 404; }
+	location ~ ^/(?:\.|autotest|console|db_|indie|issue|occ) { return 404; }
+
+	# Prepend all requests with "/index.php" -- this acts as our front controller.
+	# index.php handles all requests, but we have to hide it.
+	# The line below allows us to do exactly what we want.
+	location / {
+		rewrite ^ /index.php;
+	}
+
+	# Ensure this block, which passes PHP files to the PHP process, is above the blocks
+	# which handle static assets (as seen below). If this block is not declared first,
+	# then Nginx will encounter an infinite rewriting loop when it prepends `/index.php`
+	# to the URI, resulting in a HTTP 500 error response.
+	location ~ \.php(?:$|/) {
+		fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+		set $path_info $fastcgi_path_info;
+
+		# Try to load requested file. If it doesn't exist, instead
+		# of throwing a 404, load the front controller, where
+		# we can load a pretty 404 page.
+		try_files $fastcgi_script_name /index.php/$fastcgi_script_name;
+
+		include fastcgi_params;
+		fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+		fastcgi_param PATH_INFO $path_info;
+		fastcgi_param HTTPS on;
+
+		fastcgi_param modHeadersAvailable true;		 # Avoid sending the security headers twice
+		fastcgi_param front_controller_active true;	 # Enable pretty urls
+		fastcgi_pass unix:/var/run/php-fpm.sock;
+
+		fastcgi_intercept_errors on;
+		fastcgi_request_buffering off;
+		fastcgi_max_temp_file_size 0;
+
+		# Remove X-Powered-By, which is an information leak
+		fastcgi_hide_header X-Powered-By;
+
+		# Do not show ratelimit
+		fastcgi_hide_header X-Ratelimit-Limit;
+		fastcgi_hide_header X-Ratelimit-Remaining;
+
+		# Inform clients that HTTP3 is available
+		add_header Alt-Svc 'h3=":443"; ma=86400';
+
+		# COOP/COEP. Disable if you use external plugins/images/assets
+		add_header Cross-Origin-Opener-Policy "same-origin" always;
+		add_header Cross-Origin-Embedder-Policy "require-corp" always;
+		add_header Cross-Origin-Resource-Policy "same-origin" always;
+
+		# HSTS
+		add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+		# HTTP response headers borrowed from Nextcloud `.htaccess`
+		add_header Referrer-Policy "no-referrer";
+		add_header X-Content-Type-Options "nosniff";
+		add_header X-Download-Options "noopen";
+		add_header X-Frame-Options "SAMEORIGIN";
+		add_header X-Permitted-Cross-Domain-Policies "none";
+		add_header X-XSS-Protection "1; mode=block";
+
+		# Tell browsers to use per-origin process isolation
+		add_header Origin-Agent-Cluster "?1" always;
+	}
+
+	# Serve static files
+	location ~ \.(?:xml|asc)$ {
+		add_header Alt-Svc 'h3=":443"; ma=86400';
+		add_header Cache-Control "public, max-age=15778463, immutable";
+		add_header X-Content-Type-Options "nosniff";
+		add_header X-Frame-Options "SAMEORIGIN";
+
+		try_files $uri /index.php$request_uri;
+	}
+
+	# CSS & JS
+	location ~ \.(?:css|js|woff2)$ {
+		add_header Alt-Svc 'h3=":443"; ma=86400';
+		add_header X-Content-Type-Options "nosniff";
+		add_header X-Frame-Options "SAMEORIGIN";
+		add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+		try_files $uri /index.php$request_uri;
+		expires 10d;
+	}
+
+	# Images
+	location ~ \.(?:gif|ico|jpg|jpeg|pdf|png|svg|webp)$ {
+		add_header Alt-Svc 'h3=":443"; ma=86400';
+		add_header X-Content-Type-Options "nosniff";
+		add_header X-Frame-Options "SAMEORIGIN";
+		add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+		try_files $uri /index.php$request_uri;
+		expires 14d;
+	}
+}
+
+server {
+	listen 80;
+	listen [::]:80;
+	server_name oa.example.com;
+
+	# Prevent nginx HTTP Server Detection
+	server_tokens off;
+
+	return 301 https://oa.example.com$request_uri;
+}
+```
