@@ -74,7 +74,9 @@ public function boot()
 {
 	// Limit to 5 requests per minute.
 	RateLimiter::for('global', function (Request $request) {
-		return Limit::perMinute(5)->by($request->ip());
+		if (config('APP_ENV') == 'production') {
+			return Limit::perMinute(5)->by($request->ip());
+		}
 	});
 }
 ```
