@@ -10,7 +10,9 @@
 /.phpunit.cache
 /.vscode
 /.zed
+/composer.lock
 /node_modules
+/package-lock.json
 /public/build
 /public/hot
 /public/storage
