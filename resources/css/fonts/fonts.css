@@ -8,3 +8,5 @@
 /* Apply Montserrat to headers & link headers */
 h1,h2,h3,h4,h5,h6{font-family:'Montserrat'!important;font-weight:700!important}
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a{font-family:'Montserrat'!important;font-weight:700!important}
+/* Apply Nunito Sans to paragraphs */
+p{font-family:'Nunito Sans'!important}
