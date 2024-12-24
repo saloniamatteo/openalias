@@ -135,8 +135,22 @@ To deploy this website, you need the following:
 - Install node dependencies: `npm i`
 - Generate `APP_KEY`: `php artisan key:generate`
 
-If you want to deploy the website locally, make sure you modify `.env`,
-and uncomment the following:
+Note that you also may need to change file permissions and/or owner
+depending on your setup. If you do, run the following command:
+
+```bash
+git config core.fileMode false
+```
+
+This stops git from tracking file permission changes.
+
+If you want to deploy the website locally, copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Make sure you modify `.env`, and uncomment the following:
 
 ```env
 # Uncomment these values if running in production
@@ -155,6 +169,18 @@ If you want to serve this website to the Internet, please make sure you don't us
 I use [nginx](https://nginx.org) with [FastCGI](https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html).
 
 Make sure you also disable access to `/build/assets/manifest.json`!
+
+When updating, you may use the `update.sh` script under the `scripts/` folder:
+
+```bash
+./scripts/update.sh
+```
+
+This does the following:
+- Installs the composer + npm dependencies
+- Generates a new key, forcefully
+- Bundles the assets
+- Caches config, events, routes, views.
 
 ### Assets
 Make sure you bundle the assets used in the website (CSS, fonts, images):
