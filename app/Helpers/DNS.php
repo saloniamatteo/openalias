@@ -61,7 +61,7 @@ class DNS
     public static function checkDNSSEC($domain)
     {
         exec('host -t RRSIG ' . $domain, $output);
-        return (!strstr($output[0], 'not found')) ? true : false;
+        return (strstr($output[0], 'has RRSIG record')) ? true : false;
     }
 
     // Retrieve data from a record
