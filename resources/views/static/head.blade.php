@@ -33,7 +33,7 @@
 	<style>
 	.card { box-shadow: none }
 	code { padding: .2rem }
-	td { word-break: break-all }
+	td { word-break: break-word }
 	th { vertical-align: middle!important }
 	</style>
 </head>

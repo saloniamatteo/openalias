@@ -23,6 +23,18 @@ Page with no results:
 ![oa-norecords](Pictures/oa-norecords.png)
 
 ## Features
+### DNSSEC validation
+Each requested domain is checked for presence of `RRSIG` records,
+which confirm DNSSEC validity.
+
+The validation is done with the following command: `host -t RRSIG <domain>`,
+where `<domain>` corresponds to the requested domain, already sanitized.
+
+The results are then displayed on top of the records table,
+showing a white check mark on a green background (✅),
+or a white cross on a red background (❎),
+followed, respectively, by **DNSSEC OK**, or **DNSSEC FAIL**.
+
 ### AbuseIPDB
 This Middleware, written by me, checks if the incoming IP address comes from
 a "bad" server (crawlers, scanners, etc.), thanks to
