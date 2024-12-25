@@ -153,7 +153,7 @@ cp .env.example .env
 Make sure you modify `.env`, and uncomment the following:
 
 ```env
-# Uncomment these values if running in production
+# Uncomment these values if running locally
 APP_ENV=local
 APP_DEBUG=true
 APP_URL="http://localhost"
