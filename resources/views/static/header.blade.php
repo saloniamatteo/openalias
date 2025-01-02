@@ -1,5 +1,3 @@
-@use('App\Helpers\Url')
-
 <!-- Header -->
 <div class="header header-fixed u-unselectable u-shadow-none" style="border-bottom: 1px solid">
 <div class="header-brand">
