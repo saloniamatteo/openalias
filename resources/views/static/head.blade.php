@@ -24,16 +24,12 @@
 	<link rel="shortcut icon" href="/favicon.png">
 
 	<!-- CSS & Fonts -->
-	@vite(['resources/css/cirrus.min.css', 'resources/css/fonts/fonts.css'])
+	@vite([
+		'resources/css/cirrus.min.css',
+		'resources/css/fonts/fonts.css',
+		'resources/css/overrides.css',
+	])
 
 	<!-- JS -->
 	@vite(['resources/js/main.js'])
-
-	<!-- Overrides -->
-	<style>
-	.card { box-shadow: none }
-	code { padding: .2rem }
-	td { word-break: break-word }
-	th { vertical-align: middle!important }
-	</style>
 </head>

@@ -1,0 +1,6 @@
+/* Adjust table column sizes & word wrapping */
+td { word-break: break-word }
+th { vertical-align: middle!important }
+
+/* Remove shadows from cards */
+.card { box-shadow: none }

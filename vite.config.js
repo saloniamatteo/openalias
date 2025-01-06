@@ -23,6 +23,7 @@ export default defineConfig({
             input: [
                 'resources/css/cirrus.min.css',
                 'resources/css/fonts/fonts.css',
+                'resources/css/overrides.css',
                 'resources/js/main.js',
             ],
             refresh: true,
