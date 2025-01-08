@@ -13,7 +13,18 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'OpenAlias WebUI'),
+    'name' => env('APP_NAME', 'OpenAlias WebUI (salonia.it)'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Website Name
+    |--------------------------------------------------------------------------
+    |
+    | Used to generate OpenGraph tags.
+    |
+    */
+
+    'sitename' => env('SITE_NAME', 'OA.salonia.it'),
 
     /*
     |--------------------------------------------------------------------------
