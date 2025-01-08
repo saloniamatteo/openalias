@@ -9,6 +9,9 @@ class Url
     /* Get URL */
     public static function getURL()
     {
-        return Request::schemeAndHttpHost().'/'.Request::path();
+        // Do not append '/' if path is '/' as well
+        return (Request::path() == '/') ?
+                Request::schemeAndHttpHost() :
+                Request::schemeAndHttpHost().'/'.Request::path();
     }
 }
