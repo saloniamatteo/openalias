@@ -1,3 +1,9 @@
+/* Enable smooth scrolling */
+* { scroll-behavior: smooth }
+
+/* Add margin on top of selected items (/page#item) */
+h3 { scroll-margin-top: 5rem }
+
 /* Adjust table column sizes & word wrapping */
 td { word-break: break-word }
 th { vertical-align: middle!important }
