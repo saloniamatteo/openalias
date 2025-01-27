@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 
 class DNS
 {
@@ -23,10 +24,23 @@ class DNS
     private static function checkValid($obj, $trim = 0)
     {
         return isset($obj[1])
-                ? ($trim == 0
-                    ? $obj[1]
-                    : rtrim($obj[1], ';'))
+                ? ($trim == 0 ? $obj[1] : rtrim($obj[1], ';'))
                 : '<em>(Empty)</em>';
+    }
+
+    // Is given string a valid domain?
+    public static function checkDomain($str)
+    {
+        // Sanitize user input
+        // e()        -> htmlspecialchars
+        // Str::quish -> remove extra spaces everywhere
+        $domain = Str::squish(e($str));
+
+        // Domain pattern
+        $pattern = "/^(?!\-)(?:(?:[a-zA-Z\d][a-zA-Z\d\-]{0,61})?[a-zA-Z\d]\.){1,126}(?!\d+)[a-zA-Z\d]{1,63}$/";
+
+        // Check if given string is a URL, only if not empty
+        return ! empty($domain) && preg_match($pattern, $domain);
     }
 
     // Get OpenAlias DNS records (TXT: ^oa1)
