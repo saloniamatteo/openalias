@@ -61,7 +61,7 @@ class BlockRequest
             case $this->getConf('ip_ok'):
                 return $next($request);
 
-            // Found IP, and it is bad! Forbid.
+                // Found IP, and it is bad! Forbid.
             case $this->getConf('ip_bad'):
                 abort(403);
         }

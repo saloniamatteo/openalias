@@ -2,8 +2,8 @@
 
 namespace App\Helpers;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 class DNS
 {
@@ -14,8 +14,8 @@ class DNS
         // Note: we are reusing AbuseIPDB's TTL value (default: 15 min)
         cache(
             ["$domain" => $value],
-            now()->addMinutes(Config::get("blocker.cache_ttl")
-        ));
+            now()->addMinutes(Config::get('blocker.cache_ttl')
+            ));
     }
 
     // Check if value is correctly set and, if needed, trim the leading ';',
@@ -26,7 +26,7 @@ class DNS
                 ? ($trim == 0
                     ? $obj[1]
                     : rtrim($obj[1], ';'))
-                : "<em>(Empty)</em>";
+                : '<em>(Empty)</em>';
     }
 
     // Get OpenAlias DNS records (TXT: ^oa1)
@@ -34,8 +34,9 @@ class DNS
     {
         // Check if domain is already cached
         $cache = cache($domain);
-        if (!empty($cache))
+        if (! empty($cache)) {
             return $cache;
+        }
 
         // No cache.. get all TXT records from domain
         $records = dns_get_record($domain, DNS_TXT);
@@ -46,8 +47,9 @@ class DNS
         // Loop over records
         foreach ($records as $record) {
             // We only care about entries that start with "oa1"
-            if (str_starts_with($record["txt"], "oa1"))
-                $results[] = $record["txt"];
+            if (str_starts_with($record['txt'], 'oa1')) {
+                $results[] = $record['txt'];
+            }
         }
 
         // Cache results
@@ -60,7 +62,8 @@ class DNS
     // Check if a domain is DNSSEC verified
     public static function checkDNSSEC($domain)
     {
-        exec('host -t RRSIG ' . $domain, $output);
+        exec('host -t RRSIG '.$domain, $output);
+
         return (strstr($output[0], 'has RRSIG record')) ? true : false;
     }
 
@@ -82,28 +85,27 @@ class DNS
 
         // Match OA1 type (btc, xmr, ...). This is mandatory.
         preg_match('/oa1:(\w+)/', $record, $matches);
-        $data["oa1"] = DNS::checkValid($matches);
+        $data['oa1'] = DNS::checkValid($matches);
 
         // Match recipient address. This is mandatory.
         // We also remove the trailing ';'
         preg_match('/recipient_address=(\S+);/', $record, $matches);
-        $data["recipient_address"] = DNS::checkValid($matches, true);
+        $data['recipient_address'] = DNS::checkValid($matches, true);
 
         // Match recipient name
         // We also remove the trailing ';'
         preg_match('/recipient_name[:=](.*?);/', $record, $matches);
-        $data["recipient_name"] = DNS::checkValid($matches, true);
+        $data['recipient_name'] = DNS::checkValid($matches, true);
 
         // Match TX description
         // We also remove the trailing ';'
         preg_match('/tx_description[:=](.*?);/', $record, $matches);
-        $data["tx_description"] = DNS::checkValid($matches, true);
+        $data['tx_description'] = DNS::checkValid($matches, true);
 
         // Match TX amount
         // We also remove the trailing ';'
         preg_match('/tx_amount[:=](.*?);/', $record, $matches);
-        $data["tx_amount"] = DNS::checkValid($matches, true);
-        //$data["tx_amount"] = isset($matches[1]) ? $matches[1] : "Empty";
+        $data['tx_amount'] = DNS::checkValid($matches, true);
 
         return $data;
     }
