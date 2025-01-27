@@ -9,8 +9,8 @@ dir=$(pwd)
 composer install
 npm i
 
-# Regenerate key
-composer cache
+# Clear cache & Regenerate key
+php artisan optimize:clear
 php artisan key:generate --force
 
 # Build & cache assets
