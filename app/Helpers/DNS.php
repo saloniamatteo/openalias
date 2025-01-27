@@ -14,8 +14,8 @@ class DNS
         // Note: we are reusing AbuseIPDB's TTL value (default: 15 min)
         cache(
             ["$domain" => $value],
-            now()->addMinutes(Config::get('blocker.cache_ttl')
-            ));
+            now()->addMinutes(Config::get('blocker.cache_ttl'))
+        );
     }
 
     // Check if value is correctly set and, if needed, trim the leading ';',
