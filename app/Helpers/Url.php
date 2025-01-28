@@ -10,7 +10,7 @@ class Url
     public static function getURL()
     {
         // Do not append '/' if path is '/' as well
-        return (Request::path() == '/') ?
+        return  Request::path() === '/' ?
                 Request::schemeAndHttpHost() :
                 Request::schemeAndHttpHost().'/'.Request::path();
     }

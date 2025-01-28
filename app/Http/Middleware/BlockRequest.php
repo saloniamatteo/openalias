@@ -13,14 +13,14 @@ class BlockRequest
     /* Get value from config */
     private function getConf($value)
     {
-        return Config::get("blocker.$value");
+        return Config::get("blocker.{$value}");
     }
 
     /* Save IP to cache */
     private function cache($ip, $value)
     {
         cache(
-            ["$ip" => "$value"],
+            ["{$ip}" => "{$value}"],
             now()->addMinutes($this->getConf('cache_ttl'))
         );
     }

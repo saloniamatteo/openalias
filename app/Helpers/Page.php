@@ -23,9 +23,7 @@ class Page
             '',
         ];
 
-        $html = preg_replace($search, $replace, $html);
-
-        return $html;
+        return preg_replace($search, $replace, $html);
     }
 
     // Minify a page
@@ -43,10 +41,7 @@ class Page
         echo view($page, $params)->render();
         $html = ob_get_clean();
 
-        // Minify HTML (aka clean it up)
-        $html = Page::cleanHTML($html);
-
-        // Print minified page
-        return $html;
+        // Return minified HTML (aka clean it up)
+        return Page::cleanHTML($html);
     }
 }

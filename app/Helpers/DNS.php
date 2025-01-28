@@ -14,7 +14,7 @@ class DNS
         // Results are saved using the domain as key, and "value" is the array
         // Note: we are reusing AbuseIPDB's TTL value (default: 15 min)
         cache(
-            ["$domain" => $value],
+            ["{$domain}" => $value],
             now()->addMinutes(Config::get('blocker.cache_ttl'))
         );
     }
@@ -24,7 +24,7 @@ class DNS
     private static function checkValid($obj, $trim = 0)
     {
         return isset($obj[1])
-                ? ($trim == 0 ? $obj[1] : rtrim($obj[1], ';'))
+                ? ($trim === 0 ? $obj[1] : rtrim($obj[1], ';'))
                 : '<em>(Empty)</em>';
     }
 
@@ -76,9 +76,8 @@ class DNS
     // Check if a domain is DNSSEC verified
     public static function checkDNSSEC($domain)
     {
-        exec('host -t RRSIG '.$domain, $output);
-
-        return (strstr($output[0], 'has RRSIG record')) ? true : false;
+        exec("host -t RRSIG {$domain}", $output);
+        return strstr($output[0], 'has RRSIG record') ? true : false;
     }
 
     // Retrieve data from a record
