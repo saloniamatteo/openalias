@@ -1,5 +1,5 @@
 <!-- Header -->
-<div class="header header-fixed u-unselectable u-shadow-none" style="border-bottom: 1px solid">
+<div class="header header-fixed u-unselectable u-shadow-none blurbg" style="border-bottom: 1px solid">
 <div class="header-brand">
 	<a href="https://salonia.it">
 		<img src="{{ Vite::asset('resources/img/salonia.png') }}" alt="Logo"

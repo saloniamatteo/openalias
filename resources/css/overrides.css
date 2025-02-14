@@ -8,5 +8,11 @@ h3 { scroll-margin-top: 5rem }
 td { word-break: break-word }
 th { vertical-align: middle!important }
 
+/* Background: blur */
+.blurbg {
+    backdrop-filter: blur(8px) !important;
+    background-color: hsla(0, 0%, 100%, .88) !important
+}
+
 /* Remove shadows from cards */
 .card { box-shadow: none }
