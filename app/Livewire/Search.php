@@ -41,25 +41,6 @@ class Search extends Component
         $this->data['records'] = DNS::getRecords($domain);
     }
 
-    /* Handle form search */
-    public function search()
-    {
-        // Validate data
-        $validated = $this->validate();
-
-        // Check if we have validated data
-        if (isset($validated['text'])) {
-            // Get records
-            $this->get_records($validated['text']);
-        }
-    }
-
-    /* Validate property on update */
-    public function updated($property)
-    {
-        $this->validateOnly($property);
-    }
-
     /* Rate-limit requests */
     private function ratelimit()
     {
@@ -75,15 +56,34 @@ class Search extends Component
         return $limit;
     }
 
-    public function render()
+    /* Handle form search */
+    public function search()
     {
         /* If we hit a ratelimit, tell that to the
            frontend, and clear the results list */
         if ($this->ratelimit()) {
             $this->limit = true;
             $this->data = [];
-        }
+        } else {
+            // Validate data
+            $validated = $this->validate();
 
+            // Check if we have validated data
+            if (isset($validated['text'])) {
+                // Get records
+                $this->get_records($validated['text']);
+            }
+        }
+    }
+
+    /* Validate property on update */
+    public function updated($property)
+    {
+        $this->validateOnly($property);
+    }
+
+    public function render()
+    {
         /* Minified view */
         return Page::minify('livewire.search', [
             'limit' => $this->limit,

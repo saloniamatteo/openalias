@@ -1,10 +1,16 @@
 @use('App\Helpers\DNS')
 <div>
+	<!-- If we hit a ratelimit, disable the input -->
+	@php
+		$d = ($limit) ? "disabled" : "";
+	@endphp
+
 	<!-- Search box -->
     <div class="mt-2">
 		<form wire:submit.prevent="search">
 			<div class="input-control">
-				<input wire:model="text" type="text"
+				<input {{ $d }}
+				wire:model="text" type="text"
 				class="input-contains-icon u-round-sm"
 				maxlength="255" placeholder="salonia.it">
 
@@ -13,13 +19,31 @@
 				</span>
 			</div>
 
-			<button style="letter-spacing: 0; text-transform: none"
+			@if ($limit)
+				<span class="info u-text-center">Ricerca temporaneamente limitata.</span>
+			@endif
+
+			<button {{ $d }}
+			style="letter-spacing: 0; text-transform: none"
 			class="bg-blue-600 u-border-1 border-blue-700 text-white u-round-sm text-md">
 				Search
 				<i data-lucide="arrow-right" class="text-white w-4 u-align-middle"></i>
 			</button>
 		</form>
 	</div>
+
+    <!-- Warning if offline -->
+    <div wire:offline class="card u-border-1 border-danger mt-2 p-0">
+        <div class="ml-2 p-1">
+            <h5 class="mb-0 text-danger">Offline</h5>
+
+            <p>
+				🇬🇧 To search a new domain, go back online.
+				<br>
+				🇮🇹 Per effettuare una nuova ricerca, torna online.
+			</p>
+        </div>
+    </div>
 
 	<!-- If we have data, show card -->
 	@if (!empty($data))
