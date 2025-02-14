@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Request;
 
 class Url
 {
+    /* Get Base URL */
+    public static function getBaseURL()
+    {
+        return Request::schemeAndHttpHost();
+    }
+
     /* Get URL */
     public static function getURL()
     {

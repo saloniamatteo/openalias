@@ -43,4 +43,8 @@
 
 	<!-- JS -->
 	@vite(['resources/js/main.js'])
+
+	<!-- Livewire -->
+	@livewireScriptConfig
+	@livewireStyles
 </head>

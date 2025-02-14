@@ -5,6 +5,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.9",
+        "livewire/livewire": "^3.5",
         "nunomaduro/phpinsights": "^2.12"
     },
     "require-dev": {
