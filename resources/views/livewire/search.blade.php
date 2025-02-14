@@ -20,7 +20,8 @@
 			</div>
 
 			@if ($limit)
-				<span class="info u-text-center">Ricerca temporaneamente limitata.</span>
+				<span class="info u-text-center">🇬🇧 Search limited temporarily.</span>
+				<span class="info u-text-center">🇮🇹 Ricerca temporaneamente limitata.</span>
 			@endif
 
 			<button {{ $d }}
