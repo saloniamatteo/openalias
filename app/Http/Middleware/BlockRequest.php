@@ -21,7 +21,7 @@ class BlockRequest
     {
         cache(
             ["{$ip}" => "{$value}"],
-            now()->addMinutes($this->getConf('cache_ttl'))
+            now()->addMinutes(self::getConf('cache_ttl'))
         );
     }
 
