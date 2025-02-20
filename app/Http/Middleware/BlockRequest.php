@@ -11,13 +11,13 @@ use Illuminate\Support\Facades\Http;
 class BlockRequest
 {
     /* Get value from config */
-    private function getConf($value)
+    private static function getConf($value)
     {
         return Config::get("blocker.{$value}");
     }
 
     /* Save IP to cache */
-    private function cache($ip, $value)
+    private static function cache($ip, $value)
     {
         cache(
             ["{$ip}" => "{$value}"],
@@ -37,10 +37,10 @@ class BlockRequest
      * We try to mitigate this by using a cache.
      *
     */
-    public function handle(Request $request, Closure $next)
+    public static function handle(Request $request, Closure $next)
     {
         // Get API key
-        $key = $this->getConf('abuseipdb_key');
+        $key = self::getConf('abuseipdb_key');
 
         // Key is empty/not set, do not query AbuseIPDB and continue.
         if (empty($key)) {
@@ -58,11 +58,11 @@ class BlockRequest
         // because they do not fall through.
         switch ($cache) {
             // Found IP, and it is good! Continue.
-            case $this->getConf('ip_ok'):
+            case self::getConf('ip_ok'):
                 return $next($request);
 
                 // Found IP, and it is bad! Forbid.
-            case $this->getConf('ip_bad'):
+            case self::getConf('ip_bad'):
                 abort(403);
         }
 
@@ -97,16 +97,16 @@ class BlockRequest
 
         // Check if the IP is whitelisted
         // We also respect the "ignore_whitelist" option.
-        if (! $whitelisted || ($whitelisted && $this->getConf('ignore_whitelist'))) {
+        if (! $whitelisted || ($whitelisted && self::getConf('ignore_whitelist'))) {
             // Bad IP, save to cache, and return 403.
-            if ($score >= $this->getConf('threshold')) {
-                $this->cache($ip, $this->getConf('ip_bad'));
+            if ($score >= self::getConf('threshold')) {
+                self::cache($ip, self::getConf('ip_bad'));
                 abort(403);
             }
         }
 
         // IP is fine. Welcome!
-        $this->cache($ip, $this->getConf('ip_ok'));
+        self::cache($ip, self::getConf('ip_ok'));
 
         return $next($request);
     }
