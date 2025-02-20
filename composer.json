@@ -9,8 +9,10 @@
         "nunomaduro/phpinsights": "^2.12"
     },
     "require-dev": {
+        "buggregator/trap": "^1.13",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
+        "maantje/xhprof-buggregator-laravel": "^0.6.0",
         "nunomaduro/collision": "^8.1"
     },
     "autoload": {
