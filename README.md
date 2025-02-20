@@ -9,6 +9,11 @@ The following are used for the front-end:
 - **Framework**: [CirrusUI](https://cirrus-ui.com)
 - **Icons**: [Lucide](https://lucide.dev)
 
+Additionally, the following are used for debugging of perf data:
+- [Buggregator Trap](https://docs.buggregator.dev/trap/what-is-trap.html)
+- [XHProf](https://github.com/longxinH/xhprof)
+- [XHProf-Buggregator-Laravel](https://github.com/maantje/xhprof-buggregator-laravel)
+
 ## Donate
 Support this project: [salonia.it/donate](https://salonia.it/donate)
 
