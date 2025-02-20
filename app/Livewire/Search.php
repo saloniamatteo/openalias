@@ -12,10 +12,10 @@ use Livewire\Component;
 class Search extends Component
 {
     #[Locked]
-    public $limit;          // Rate-limit? (true|false)
+    public static $limit;   // Rate-limit? (true|false)
 
     #[Locked]
-    public $data;           // Data array
+    public static $data;    // Data array
 
     public $text;           // User search text
 
@@ -35,14 +35,14 @@ class Search extends Component
 
     /* Search a domain; Results are cached for 5 minutes */
     #[Computed(persist: true, seconds: 60 * 5)]
-    private function get_records($domain)
+    private static function get_records($domain)
     {
-        $this->data['dnssec'] = DNS::checkDNSSEC($domain);
-        $this->data['records'] = DNS::getRecords($domain);
+        self::$data['dnssec'] = DNS::checkDNSSEC($domain);
+        self::$data['records'] = DNS::getRecords($domain);
     }
 
     /* Rate-limit requests */
-    private function ratelimit()
+    private static function ratelimit()
     {
         /* Assign a unique key */
         $key = 'livewire:'.auth()->id();
@@ -61,9 +61,9 @@ class Search extends Component
     {
         /* If we hit a ratelimit, tell that to the
            frontend, and clear the results list */
-        if ($this->ratelimit()) {
-            $this->limit = true;
-            $this->data = [];
+        if (self::ratelimit()) {
+            self::$limit = true;
+            self::$data = [];
         } else {
             // Validate data
             $validated = $this->validate();
@@ -71,7 +71,7 @@ class Search extends Component
             // Check if we have validated data
             if (isset($validated['text'])) {
                 // Get records
-                $this->get_records($validated['text']);
+                self::get_records($validated['text']);
             }
         }
     }
@@ -86,8 +86,8 @@ class Search extends Component
     {
         /* Minified view */
         return Page::minify('livewire.search', [
-            'limit' => $this->limit,
-            'data' => $this->data,
+            'limit' => self::$limit,
+            'data' => self::$data,
         ]);
     }
 }
