@@ -42,6 +42,6 @@ class Page
         $html = ob_get_clean();
 
         // Return minified HTML (aka clean it up)
-        return Page::cleanHTML($html);
+        return self::cleanHTML($html);
     }
 }
