@@ -52,7 +52,7 @@ class DNS
         }
 
         // Cache results
-        DNS::cache($domain, $results);
+        self::cache($domain, $results);
 
         // Return array
         return $results;
@@ -83,27 +83,27 @@ class DNS
 
         // Match OA1 type (btc, xmr, ...). This is mandatory.
         preg_match('/oa1:(\w+)/', $record, $matches);
-        $data['oa1'] = DNS::checkValid($matches);
+        $data['oa1'] = self::checkValid($matches);
 
         // Match recipient address. This is mandatory.
         // We also remove the trailing ';'
         preg_match('/recipient_address=(\S+);/', $record, $matches);
-        $data['recipient_address'] = DNS::checkValid($matches, true);
+        $data['recipient_address'] = self::checkValid($matches, true);
 
         // Match recipient name
         // We also remove the trailing ';'
         preg_match('/recipient_name[:=](.*?);/', $record, $matches);
-        $data['recipient_name'] = DNS::checkValid($matches, true);
+        $data['recipient_name'] = self::checkValid($matches, true);
 
         // Match TX description
         // We also remove the trailing ';'
         preg_match('/tx_description[:=](.*?);/', $record, $matches);
-        $data['tx_description'] = DNS::checkValid($matches, true);
+        $data['tx_description'] = self::checkValid($matches, true);
 
         // Match TX amount
         // We also remove the trailing ';'
         preg_match('/tx_amount[:=](.*?);/', $record, $matches);
-        $data['tx_amount'] = DNS::checkValid($matches, true);
+        $data['tx_amount'] = self::checkValid($matches, true);
 
         return $data;
     }
