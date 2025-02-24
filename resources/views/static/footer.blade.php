@@ -1,14 +1,33 @@
 <!-- Footer -->
-<footer class="footer bg-black p-4 mt-0 u-center">
+<footer class="footer bg-white p-4 mt-8 u-center">
+	<!-- Logo -->
 	<a href="https://salonia.it">
-		<!-- Instead of including yet another image, include the same image
-		     as the header, then we use CSS to invert the colors -->
 		<img src="{{ Vite::asset('resources/img/salonia.png') }}"
 		alt="Logo" loading="lazy"
-		style="min-width: 180px; width: 14rem !important; filter: invert(1)">
+		style="min-width: 180px; width: 14rem !important">
 	</a>
 
-	<h4 class="title text-white mt-1 mb-1" style="padding-top: 0.15em !important">Infrastrutture Digitali</h4>
-	<h6 class="font-bold text-white mb-0 w-100p">di <a class="text-blue-300" href="https://salonia.it/contact">Salonia Matteo</a></h6>
-	<p class="text-sm text-white mt-2 mb-0 w-100p">&copy; 2020-<?= date("Y") ?></p>
+	<!-- Text -->
+	<p class="title mt-1 mb-1 text-black"
+	   style="padding-top: 0.15em !important; font-size: 1.8rem !important; line-height: 2.25rem !important"
+	>
+		<strong>Infrastrutture Digitali</strong>
+	</p>
+
+	<h6 class="font-bold mb-0 w-100p">
+		di <a class="text-blue-700" href="https://salonia.it/contact">Matteo Salonia</a>
+	</h6>
+
+	<div class="mt-2">
+		<a class="u u-LR text-gray-700 font-medium" href="https://salonia.it/contact">
+			Contact
+		</a>
+		&nbsp;&nbsp;&nbsp;
+
+		<a class="u u-LR text-gray-700 font-medium" href="https://salonia.it/donate">
+			Donate
+		</a>
+	</div>
+
+	<p class="text-sm mt-2 mb-0 w-100p">&copy; 2020-<?= date("Y") ?></p>
 </footer>
