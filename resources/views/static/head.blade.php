@@ -36,7 +36,7 @@
 
 	<!-- CSS & Fonts -->
 	@vite([
-		'resources/css/cirrus.min.css',
+		'resources/css/cirrus.css',
 		'resources/css/fonts/fonts.css',
 		'resources/css/overrides.css',
 	])

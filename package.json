@@ -3,17 +3,20 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build-css": "sass --no-source-map --update --load-path=node_modules --load-path=node_modules/cirrus-ui/ --load-path=node_modules/cirrus-ui/src resources/css/cirrus.scss resources/css/cirrus.css",
+        "build": "npm run build-css && vite build",
         "dev": "vite"
     },
     "devDependencies": {
+        "@erbelion/vite-plugin-laravel-purgecss": "^0.3.2",
         "autoprefixer": "^10.4.20",
+        "cirrus-ui": "^0.8.0",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.47",
+        "sass": "^1.85.1",
         "vite": "^6.0"
     },
     "dependencies": {
-        "@erbelion/vite-plugin-laravel-purgecss": "^0.3.2",
-        "lucide": "^0.469.0"
+        "lucide": "^0.460.0"
     }
 }

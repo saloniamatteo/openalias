@@ -1,0 +1,59 @@
+// Import Cirrus
+@use "../../node_modules/cirrus-ui/src/cirrus-ext" as * with (
+    $config: (
+        // Exclude what we don't use
+        excludes: (
+            // Base
+            //'DEFAULT',        // Default style (à la reset)
+            //'ANIMATIONS',     // Keyframes
+            //'FONT',           // Not just custom fonts but text styles as well
+            //'GRID',           // Grid templates
+            //'LAYOUT',         // Content, fullscreen, divider, hero, etc.
+            //'MEDIA',          // Images, videos, iframes
+            //'MODIFIERS',      // Colors
+            //'SPACING',        // Margin, padding
+
+            // Components
+            'ACCORDION',        // (Extended)
+            'AVATAR',           // (Extended)
+            'BREADCRUMB',       // (Extended)
+            //'BUTTON',         // (Core)
+            //'CARD',           // (Extended)
+            'CODE',             // (Core)
+            //'FOOTER',         // (Core)
+            'FORM-EXT',         // (Extended)
+            //'FORMS',          // (Core)
+            'FRAMES',           // (Core)
+            //'HEADER',         // (Core)
+            //'LINK-EXT',       // (Extended): animated links
+            //'LINKS',          // (Core)
+            'LISTS',            // (Core)
+            'MODAL',            // (Extended)
+            'PAGINATION',       // (Extended)
+            'PROGRESS',         // (Core)
+            //'TABLE',          // (Core)
+            'TABS',             // (Extended)
+            'TAGS',             // (Extended)
+            //'TILES',          // (Extended)
+            'TOAST',            // (Extended)
+            'TOOLTIPS',         // (Extended)
+
+            // Utils
+            'ABSOLUTE',         // Classes to place positioned elements
+            'BLUR',
+            //'BORDER',
+            'CLEARFIX',         // Object clearfix
+            'CURSOR',           // Element cursor style
+            //'DISPLAY',        // Element display classes
+            'FLEX',             // Control flex attributes
+            //'MISC',           // Text alignment, disabled, unselectable
+            'OPACITY',
+            'OVERFLOW',
+            'POSITION',         // Static, fixed, relative, absolute, sticky
+            //'SHADOWS',
+            'TRANSITIONS',      // Transition duration
+            //'VERTICAL-ALIGN',
+            'ZINDEX',
+        )
+    )
+);
