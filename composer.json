@@ -10,6 +10,7 @@
     },
     "require-dev": {
         "buggregator/trap": "^1.13",
+        "laravel/envoy": "^2.10",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
         "maantje/xhprof-buggregator-laravel": "^0.6.0",
@@ -26,6 +27,9 @@
             "@php artisan view:cache",
             "@php artisan route:cache",
             "@php artisan optimize"
+        ],
+        "deploy": [
+            "./vendor/bin/envoy run deploy"
         ],
         "lint": [
             "./vendor/bin/pint -v"
