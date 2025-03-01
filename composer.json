@@ -4,7 +4,7 @@
     "description": "Matteo Salonia's OpenAlias WebUI",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^11.9",
+        "laravel/framework": "^12.0",
         "livewire/livewire": "^3.5",
         "nunomaduro/phpinsights": "^2.12"
     },
@@ -13,7 +13,6 @@
         "laravel/envoy": "^2.10",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
-        "maantje/xhprof-buggregator-laravel": "^0.6.0",
         "nunomaduro/collision": "^8.1"
     },
     "autoload": {
