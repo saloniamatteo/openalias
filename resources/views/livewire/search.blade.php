@@ -33,8 +33,18 @@
 		</form>
 	</div>
 
+    <!-- Loading -->
+	<div wire:loading class="w-100p">
+	<div class="card u-border-2 border-blue-400">
+		<div class="animated loading loading-left">
+			<p class="mr-2">Loading/Caricamento in corso...</p>
+		</div>
+	</div>
+	</div>
+
     <!-- Warning if offline -->
-    <div wire:offline class="card u-border-1 border-danger mt-2 p-0">
+    <div wire:offline class="w-100p">
+	<div class="card u-border-2 border-danger mt-2 p-0">
         <div class="ml-2 p-1">
             <h5 class="mb-0 text-danger">Offline</h5>
 
@@ -44,6 +54,7 @@
 				🇮🇹 Per effettuare una nuova ricerca, torna online.
 			</p>
         </div>
+    </div>
     </div>
 
 	<!-- If we have data, show card -->
