@@ -33,7 +33,7 @@
 		</form>
 	</div>
 
-    <!-- Loading -->
+	<!-- Loading -->
 	<div wire:loading class="w-100p">
 	<div class="card u-border-2 border-blue-400">
 		<div class="animated loading loading-left">
