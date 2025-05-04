@@ -77,11 +77,20 @@ Additionally, you can tune the following parameters:
 - `ABUSEIPDB_IP_OK`: Store this string for a known good IP. Default: `OK`
 - `ABUSEIPDB_IP_BAD`: Store this string for a known bad IP. Default: `BAD`
 
+### CheckRequest Middleware
+This Middleware, written by me, checks if the incoming request method and/or path
+are disallowed. If they are, a zip bomb is sent to the client.
+
+Note that this is employed only for those pesky bots & vulnerability scanners.
+Normal browsing will not be affected at all.
+
+If you plan on using this middleware, make sure you take a look at
+the `paths` array in `config/checkrequest.php`!
+
 ### Rate limiter
-Apart from the AbuseIPDB integration, this website uses Laravel's
-[rate limiter](https://laravel.com/docs/11.x/rate-limiting).
-It uses the same `CACHE_STORE` driver as the AbuseIPDB integration,
-which defaults to `file`.
+This website uses Laravel's [rate limiter](https://laravel.com/docs/11.x/rate-limiting).
+It uses the same `CACHE_STORE` driver as the AbuseIPDB integration & CheckRequest middleware,
+which default to `file`.
 
 The rate limiter is defined in `app/Providers/AppServiceProvider.php` as follows:
 
