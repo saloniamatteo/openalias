@@ -47,4 +47,9 @@
 	<!-- Livewire -->
 	@livewireScriptConfig
 	@livewireStyles
+
+	<!-- Check if head.after.blade.php exists, and include it -->
+	@if (file_exists(resource_path("views/static/head-after.blade.php")))
+		@include('static/head-after')
+	@endif
 </head>
