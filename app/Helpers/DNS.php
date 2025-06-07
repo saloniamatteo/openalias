@@ -61,8 +61,8 @@ class DNS
     // Check if a domain is DNSSEC verified
     public static function checkDNSSEC($domain)
     {
-        exec("host -t RRSIG {$domain}", $output);
-        return strstr($output[0], 'has RRSIG record') ? true : false;
+        exec("dig {$domain} ds +noall +answer", $output);
+        return !empty($output) && strstr($output[0], 'DS') ? true : false;
     }
 
     // Retrieve data from a record
