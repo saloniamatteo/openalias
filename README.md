@@ -32,8 +32,10 @@ Page with no results:
 Each requested domain is checked for presence of `RRSIG` records,
 which confirm DNSSEC validity.
 
-The validation is done with the following command: `host -t RRSIG <domain>`,
+The validation is done with the following command: `dig <domain> ds`,
 where `<domain>` corresponds to the requested domain, already sanitized.
+Please make sure your system has the `dig` command!
+This is typically provided by `bind9-dnsutils` or `bind-tools`.
 
 The results are then displayed on top of the records table,
 showing a white check mark on a green background (✅),
