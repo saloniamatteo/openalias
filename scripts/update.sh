@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Run this script when (git) pulling from this repo
 
 # Check where we are run and cd accordingly
